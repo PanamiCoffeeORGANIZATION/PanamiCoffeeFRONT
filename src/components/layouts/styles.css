@@ -1,0 +1,27 @@
+#navbar img.logo{
+    width: 100px;
+}
+#navbar div.carrito{
+    border-radius: 50px;
+    background-color: #525964;
+    cursor: pointer;
+    position: relative;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding-top: 5px;
+}
+#navbar p{
+    background: #525964;
+    display: flex;
+    width: 20px;
+    position: absolute;
+    top: -7px;
+    right: -12px;
+    height: 20px;
+    border-radius: 50px;
+    align-items: center;
+    justify-content: center;
+}

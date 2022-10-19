@@ -1,0 +1,83 @@
+#carritoItem img{
+    width: 100%;
+    height: auto;
+    object-fit: cover;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+}
+#carritoItem p.counter{
+    width: 20px;
+    height: 20px;
+    background-color: #000000a8;
+    border-radius: 50px;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 5px;
+    left:-10px;
+    font-size: 13px;
+}
+#carritoItem button.counter{
+    border: none;
+    position: absolute;
+    width: 15px;
+    height: 15px;
+    border-radius: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 3px;
+    left: -7px;
+    transition: .4s;
+    padding-left: 1px;
+}
+#carritoItem button.counter.a{
+    background-color: white;
+    top: 30px;
+    color: black;
+}
+#carritoItem button.counter.a:hover{
+    background-color: #cfcfcf;
+    transition: .4s;
+}
+#carritoItem button.counter.b{
+    background-color: #ff3737;
+    top: 52px;
+    color: white;
+    padding-left: 0;
+}
+#carritoItem button.counter.b:hover{
+    background-color: #bd1e1e;
+    transition: .4s;
+}
+#carritoItem button.counter.x{
+    background-color: #ffffff;
+    top: -5px;
+    color: rgb(0, 0, 0);
+    padding-left: 0;
+    left: 97.6% !important;
+    font-weight: bold;
+}
+#carritoItem .counter.x{
+    cursor: pointer;
+    transition: .4s;
+}
+#carritoItem .counter.x:hover{
+    color: #ff3737;
+}
+#carritoItem button.counter.x:hover{
+    background-color: #bfbfbf;
+    transition: .4s;
+}
+#carritoItem h6{
+    font-size: 13px;
+    font-weight: 400;
+    position: absolute;
+    bottom: 0;
+    right: 0px;
+    background: #212529;
+    border-bottom-left-radius:6px;
+    border-top-left-radius:6px;
+    padding: 2px 10px;
+}

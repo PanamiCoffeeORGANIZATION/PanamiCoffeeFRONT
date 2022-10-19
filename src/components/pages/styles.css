@@ -1,0 +1,32 @@
+section#productos{
+    background-color: #363F4D;
+    height: calc(100vh - 84px);
+    overflow-y: scroll;
+}
+
+section#productos p.price{
+    border-radius: 10px;
+    background-color: white;
+    padding: 0px 7px;
+    position: absolute;
+    font-weight: bold;
+    top: 10px;
+    left: 10px;
+}
+section#productos img.icons{
+    position: absolute;
+    top: -10px;
+    left: -10px;
+    width: 20px;
+}
+section#productos a.add-product::before{
+    content: url('../../assets/images/Iconos/mas.png');
+    margin-right: 10px;
+}
+section#productos a.add-remove::before{
+    content: url('../../assets/images/Iconos/minus-sign.png');
+    margin-right: 10px;
+}
+div.card-producto{
+    background-color: #525964 !important;
+}
