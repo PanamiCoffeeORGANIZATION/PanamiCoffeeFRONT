@@ -5,11 +5,6 @@ import { NavbarLayout } from "../layouts/NavbarLayout"
 import { Carrito } from "./components/Carrito"
 import { ProductoItem } from "./components/ProductoItem"
 
-// Icons
-import hotDrink from '../../assets/images/Iconos/hot-drink.png'
-import coldDrink from '../../assets/images/Iconos/cold-drink.png'
-import panaderia from '../../assets/images/Iconos/panaderia.png'
-
 // Helpers
 import { arr } from "../../helpers/data"
 

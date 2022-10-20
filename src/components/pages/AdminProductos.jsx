@@ -4,8 +4,9 @@ import { useState } from "react";
 import { BsFillBagPlusFill, BsImages } from "react-icons/bs";
 import { MdDescription } from "react-icons/md";
 import { RiPencilFill, RiDeleteBin4Fill } from "react-icons/ri";
+import { HiIdentification } from "react-icons/hi";
 // Componentes
-import { NavbarLayout } from "../layouts/NavbarLayout"
+import { NavbarLayoutAdmin } from "../layouts/NavbarLayoutAdmin";
 
 // Helpers
 import { arr } from "../../helpers/data";
@@ -14,10 +15,41 @@ import { arr } from "../../helpers/data";
 export const AdminProductos = () => {
 
     const [data, setData] = useState(arr);
+    const [dataModal, setDataModal] = useState([])
+
+    // Inputs para edición
+    const [inpNombre, setInpNombre] = useState("");
+    const [inpDescripcion, setInpDescripcion] = useState("");
+    const [inpStock, setInpStock] = useState("");
+    const [inpImg, setInpImg] = useState("");
+    const [inpCategoria, setInpCategoria] = useState("");
+
+    const handleDescription = ({ id, descripcion, img }) => {
+        // 0 -> id
+        // 1 -> descripcion
+        // 2 -> img
+        setDataModal([id, descripcion, img])
+    }
+
+    const llenarCamposEdicion = ( item ) => {
+        setDataModal([item.id])
+        setInpNombre( item.nombre );
+        setInpCategoria( item.categoria );
+        setInpImg( item.img );
+        setInpStock( item.stock );
+        setInpDescripcion( item.descripcion );
+    }
+
+    const handleNombre = e => setInpNombre( e.target.value );
+    const handleCategoria = e => setInpCategoria( e.target.value );
+    const handleImg = e => setInpImg( e.target.value );
+    const handleDescripcion = e => setInpDescripcion( e.target.value );
+    const handleStock = e => setInpStock( e.target.value );
+    
 
     return (
         <>
-            <NavbarLayout />
+            <NavbarLayoutAdmin />
             <div id="admin-productos" className="bg-dark" style={{ minHeight: "100vh", maxHeight: "auto" }}>
                 <div className="container">
                     <div className="row">
@@ -40,7 +72,7 @@ export const AdminProductos = () => {
                                 <tbody>
                                     {
                                         data.map(item => (
-                                            <tr>
+                                            <tr key={item.id}>
                                                 <th scope="row">{item.id}</th>
                                                 <td>{item.nombre}</td>
                                                 <td>{item.categoria}</td>
@@ -50,6 +82,7 @@ export const AdminProductos = () => {
                                                             className="btn btn-purple"
                                                             data-bs-toggle="modal"
                                                             data-bs-target="#img-modal"
+                                                            onClick={() => handleDescription(item)}
                                                         >
                                                             <BsImages />
                                                         </button>
@@ -61,16 +94,18 @@ export const AdminProductos = () => {
                                                         className="btn btn-secondary"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#desc-modal"
+                                                        onClick={() => handleDescription(item)}
                                                     >
                                                         <MdDescription />
                                                     </button>
                                                 </td>
                                                 <td>{item.stock}</td>
                                                 <td>
-                                                <button
+                                                    <button
                                                         className="btn btn-primary me-1"
                                                         data-bs-toggle="modal"
                                                         data-bs-target="#edit-modal"
+                                                        onClick={() => llenarCamposEdicion(item)}
                                                     >
                                                         <RiPencilFill />
                                                     </button>
@@ -88,53 +123,76 @@ export const AdminProductos = () => {
                 </div>
             </div>
             {/* Modal */}
-            <div className="modal" tabindex="-1" id="desc-modal">
-                <div className="modal-dialog">
-                    <div className="modal-content">
+            <div className="modal" tabIndex="-1" id="desc-modal">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content bg-dark text-white">
                         <div className="modal-header">
-                            <h5 className="modal-title">Descripción</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 className="modal-title">Descripción <br /><HiIdentification /> {dataModal[0]}</h5>
+                            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <p>Modal body text goes here.</p>
+                            <p>{dataModal[1]}</p>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary">Save changes</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="modal" tabindex="-1" id="img-modal">
-                <div className="modal-dialog">
-                    <div className="modal-content">
+            <div className="modal" tabIndex="-1" id="img-modal">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content bg-dark text-white">
                         <div className="modal-header">
-                            <h5 className="modal-title">Imagen</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 className="modal-title">Imagen <br /><HiIdentification /> {dataModal[0]}</h5>
+                            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <p>Modal body text goes here.</p>
+                            <img className="img-fluid rounded" src={dataModal[2]} alt="img" />
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary">Save changes</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="modal" tabindex="-1" id="edit-modal">
-                <div className="modal-dialog">
-                    <div className="modal-content">
+            {/* Modal Edición */}
+            <div className="modal" tabIndex="-1" id="edit-modal">
+                <div className="modal-dialog modal-dialog-centered">
+                    <div className="modal-content bg-dark text-white">
                         <div className="modal-header">
-                            <h5 className="modal-title">Edición</h5>
-                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            <h5 className="modal-title">Edición <br /><HiIdentification /> {dataModal[0]}</h5>
+                            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <p>Modal body text goes here.</p>
+                            <form>
+                                <div className="mb-1 row">      
+                                    <div className="col-6">
+                                        <label htmlFor="nombre">Nombre</label>
+                                        <input onChange={handleNombre} value={inpNombre} type="text" className="form-control" id="nombre" />    
+                                    </div> 
+                                    <div className="col-3">
+                                        <label htmlFor="categoria">Categoria</label>
+                                        <input onChange={handleCategoria} value={inpCategoria} type="text" className="form-control" id="categoria" />  
+                                    </div>
+                                    <div className="col-3">
+                                        <label htmlFor="stock">Stock</label>
+                                        <input onChange={handleStock} value={inpStock} type="text" className="form-control" id="stock" />    
+                                    </div>
+                                </div>
+                                <div className="mb-2">
+                                    <label htmlFor="descripcion">Descripción</label>
+                                    <textarea onChange={handleDescripcion} value={inpDescripcion} type="text" className="form-control" id="descripcion"></textarea>
+                                </div>
+                                <div className="mb-3">
+                                    <label htmlFor="img">Selecciona una imagen</label>
+                                    <input onChange={handleImg} type="file" className="form-control" id="img" />
+                                </div>
+
+                                <button type="submit" className="btn btn-primary">Editar</button>
+                            </form>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary">Save changes</button>
                         </div>
                     </div>
                 </div>
