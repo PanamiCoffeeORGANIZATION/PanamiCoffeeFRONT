@@ -30,3 +30,10 @@ section#productos a.add-remove::before{
 div.card-producto{
     background-color: #525964 !important;
 }
+
+/* SECCIÓN DE ADMIN/PRODUCTOS */
+#admin-productos td, th{
+    text-align: center;
+}
+
+/*  */

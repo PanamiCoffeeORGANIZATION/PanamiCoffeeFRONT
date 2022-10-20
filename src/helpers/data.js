@@ -5,7 +5,7 @@ export const arr = [
         precio: "1000", 
         descripcion: "Este café tiene un aroma a yo no se que se se siente yo né como", 
         img: "https://media-cldnry.s-nbcnews.com/image/upload/t_nbcnews-fp-1200-630,f_auto,q_auto:best/newscms/2019_33/2203981/171026-better-coffee-boost-se-329p.jpg", 
-        stock: 10, 
+        stock: 30, 
         categoria: 1  
     },
     { 

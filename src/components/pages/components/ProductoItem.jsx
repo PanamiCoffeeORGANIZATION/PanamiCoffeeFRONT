@@ -27,7 +27,6 @@ export const ProductoItem = (props) => {
                 <div className="card-body text-white text-white">
                     <h5 className="card-title">{data.nombre}</h5>
                     <p className="card-text"><i>{data.descripcion}</i></p>
-                    <small>{data.stock}</small>
                     {
                         !deleteSelect
                             ?

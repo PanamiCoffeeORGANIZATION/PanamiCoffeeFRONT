@@ -17,7 +17,6 @@ export const CarritoItem = (props) => {
     }, [carrito])
 
     const addProducto = () => {
-        if (cantPerProduct >= 20) return;
         if (cantPerProduct >= carrito.stock){
             setStockAlert( true );
             setTimeout( () => {
@@ -35,8 +34,6 @@ export const CarritoItem = (props) => {
     const removeProduct = () => {
 
         if (cantPerProduct <= 1) return
-        if (cantPerProduct > 20) return
-
         carrito.cantidadProductos = cantPerProduct - 1;
         let valorPr = Number(carrito.precio);
         changeValue(totalValue - valorPr);
