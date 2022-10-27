@@ -1,5 +1,6 @@
 import './styles.css'
 import logo from '../../assets/images/logos/logosinfondo.png';
+import { Link } from 'react-router-dom';
 
 export const NavbarLayoutAdmin = (props) => {
     const { carrito } = props;
@@ -14,12 +15,12 @@ export const NavbarLayoutAdmin = (props) => {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <li className="nav-item">
+                        <Link to="/admin/productos" className="nav-item">
                             <a className="nav-link" href="#">Productos</a>
-                        </li>
-                        <li className="nav-item">
+                        </Link>
+                        <Link to="/admin/ventas" className="nav-item">
                             <a className="nav-link" href="#">Ventas</a>
-                        </li>
+                        </Link>
                     </ul>
                 </div>
             </div>

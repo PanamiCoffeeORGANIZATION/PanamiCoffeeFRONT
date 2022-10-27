@@ -1,6 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { AdminProductos } from '../components/pages/AdminProductos';
+import { AdminProductos } from '../components/pages/Admin/AdminProductos';
+import { Ventas } from '../components/pages/Admin/Ventas';
 
 // Components - Pages
 import { Login } from '../components/pages/Login';
@@ -15,8 +16,7 @@ function App() {
           <Route path='login' element={<Login />} />
           <Route path='user/productos' element={<Productos />} />
           <Route path='admin/productos' element={<AdminProductos />} />
-          {/* Cristian cambie el componente de abajo */}
-          <Route path='admin/ventas' element={<AdminProductos />} />
+          <Route path='admin/ventas' element={<Ventas />} />
         </Routes>
       </BrowserRouter>
     </>

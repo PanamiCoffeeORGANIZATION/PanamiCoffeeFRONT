@@ -5,7 +5,7 @@ import { arr } from "../../../helpers/data";
 import { CarritoItem } from "./CarritoItem";
 
 export const Carrito = (props) => {
-    const { data, changeData, reload, changeReload } = props;
+    const { data, changeData, reload, changeReload, setAlert } = props;
 
     const [totalValue, setTotalValue] = useState(0);
     const [formatValue, setFormatValue] = useState(0);
@@ -17,17 +17,25 @@ export const Carrito = (props) => {
     let year = today.getFullYear();
 
     const finalizarCompra = () => {
-        console.log( data );
-        data.push({total: totalValue})
-        arr.map( item => {
-            data.map( carro => {
+        console.log(data);
+        data.push({ total: totalValue })
+        arr.map(item => {
+            data.map(carro => {
                 item === carro ?
-                item.stock = item.stock - carro.cantidadProductos
-                : null
+                    item.stock = item.stock - carro.cantidadProductos
+                    : null
             })
         })
-        changeReload( !reload );
+        changeReload(!reload);
         changeData([])
+        setAlert([true,{text: 'Tu orden se ha realizado exitosamente', type:'success'}])
+        setTimeout( () => {setAlert([false,{}])}, 10000)
+    }
+
+    const cancelarCompra = () => {
+        changeData([])
+        setAlert([true,{text: 'Tu orden ha sido cancelada', type:'info'}])
+        setTimeout( () => {setAlert([false,{}])}, 10000)
     }
 
     useEffect(() => {
@@ -64,9 +72,13 @@ export const Carrito = (props) => {
                             </div>
                         </div>
                         {
-                            data.length === 0 &&
+                            data.length === 0 ?
                             <div className="row text-center">
                                 <p className="m-0">Aun no hay productos seleccionados</p>
+                            </div>
+                            :
+                            <div className="row text-center">
+                                <p className="m-0">Productos</p>
                             </div>
                         }
 
@@ -85,9 +97,14 @@ export const Carrito = (props) => {
                         {
                             data.length > 0 &&
                             <div className="row">
-                                <button 
-                                onClick={finalizarCompra}
-                                className="btn btn-purple mt-3">Finalizar compra</button>
+                                <button
+                                    onClick={finalizarCompra}
+                                    data-bs-dismiss="offcanvas"
+                                    className="btn btn-purple mt-3">Finalizar compra</button>
+                                <button
+                                    onClick={cancelarCompra}
+                                    data-bs-dismiss="offcanvas"
+                                    className="btn btn-danger mt-2">Cancelar compra</button>
                             </div>
                         }
 

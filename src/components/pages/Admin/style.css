@@ -1,0 +1,11 @@
+
+#admin-ventas{
+    width: auto;
+    height: calc(  100vh - 68px );
+    overflow-x: hidden;
+    overflow-y: scroll;
+}
+
+#admin-ventas th, #admin-ventas td{
+    text-align: center;
+}

@@ -7,7 +7,7 @@ export const NavbarLayout = (props) => {
     const { carrito } = props;
     return (
         <nav className="navbar navbar-expand-lg navbar-myDark position-relative p-0" id='navbar'>
-            <div className="container-fluid mx-5">
+            <div className="container-fluid mx-4">
                 <a className="navbar-brand me-5" href="#">
                     <img className="logo logo me-3" src={logo} alt="logo" />
                 </a>
