@@ -20,11 +20,11 @@ section#productos img.icons{
     width: 20px;
 }
 section#productos a.add-product::before{
-    content: url('../../assets/images/Iconos/mas.png');
+    content: url('../../assets/images/iconos/mas.png');
     margin-right: 10px;
 }
 section#productos a.add-remove::before{
-    content: url('../../assets/images/Iconos/minus-sign.png');
+    content: url('../../assets/images/iconos/minus-sign.png');
     margin-right: 10px;
 }
 div.card-producto{
@@ -36,4 +36,38 @@ div.card-producto{
     text-align: center;
 }
 
-/*  */
+/* LOGIN */
+section#login, section#register{
+    align-items: center;
+    background-color: #363F4D;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+}
+section#login .container, section#register .container{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+}
+section#login .data, section#register .data{
+    position: relative;
+}
+section#login .registerLink, section#register .registerLink{
+    font-size: 13px;
+}
+section#login .registerLink a, section#register .registerLink a{
+    font-weight: bold;
+}
+section#login .logo, section#register .logo{
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 55px;
+}
+
+/* REGISTER */ 
+section#register label{
+    font-size: 14px;
+    margin-bottom: 2px;
+}
