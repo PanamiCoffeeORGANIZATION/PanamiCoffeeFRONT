@@ -31,15 +31,15 @@ export const ProductoItem = (props) => {
                         !deleteSelect
                             ?
                             <a href="#" id={data.id} className="btn btn-purple my-2 add-product" onClick={() => addProduct(data)}>
-                                Agregar producto
+                                Agregar al carrito
                             </a>
                             :
                             <a href="#" id={data.id} className="btn btn-warning my-2 add-remove" onClick={() => handleDelete(data)}>
-                                Eliminar producto
+                                Eliminar del carrito
                             </a>
                     }
                 </div>
-                <p className="price">$ {data.precio}</p>
+                <p className="price">$ {Number(data.precio).toLocaleString('en-US')}</p>
             </div>
         </div>
     )

@@ -36,6 +36,7 @@ export const Productos = () => {
 
     useEffect(() => {
         setProductosFiltro(arr);
+        console.log( arr );
     }, [reload])
 
     return (
