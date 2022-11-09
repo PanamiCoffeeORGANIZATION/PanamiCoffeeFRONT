@@ -2,6 +2,7 @@ section#productos{
     background-color: #363F4D;
     height: calc(100vh - 68px);
     overflow-y: scroll;
+    overflow-x: hidden;
 }
 
 section#productos p.price{
@@ -19,6 +20,17 @@ section#productos img.icons{
     left: -10px;
     width: 20px;
 }
+section#productos div.empty {
+    align-items: center;
+    display: flex;
+    flex-direction: column;
+}
+section#productos div.empty img{
+    width: 200px;
+}
+section#productos div.empty h4{
+    color: white;
+}
 section#productos a.add-product::before{
     content: url('../../assets/images/iconos/mas.png');
     margin-right: 10px;
@@ -26,6 +38,35 @@ section#productos a.add-product::before{
 section#productos a.add-remove::before{
     content: url('../../assets/images/iconos/minus-sign.png');
     margin-right: 10px;
+}
+section#productos div.categories-div{
+    align-items: center;
+    background: #223147;
+    border-radius: 6px;
+    width: 75vw;
+    padding: 0px 20px;
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 20px;
+    overflow-x: scroll;
+}
+section#productos div.categories-div button.placeholder{
+    animation: placeholderBlue linear infinite 3s;
+    background: #a5a5a5;
+    border: none;
+    border-radius: 6px;
+    height: 30px;
+    width: 150px;
+}
+section#productos div.categories-div button{
+    width: auto;
+    height: auto;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 div.card-producto{
     background-color: #525964 !important;
@@ -64,6 +105,9 @@ section#login .logo, section#register .logo{
     top: 10px;
     right: 10px;
     width: 55px;
+}
+section#login .error, section#register .error{
+    color: rgb(255, 68, 68);
 }
 
 /* REGISTER */ 

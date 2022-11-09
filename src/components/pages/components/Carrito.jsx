@@ -1,54 +1,58 @@
 import { useEffect, useState } from "react";
 
 // Helpers
-import { arr } from "../../../helpers/data";
 import { CarritoItem } from "./CarritoItem";
 
 export const Carrito = (props) => {
-    const { data, changeData, reload, changeReload, setAlert } = props;
+    const { carrito, changeCarrito, reload, changeReload, setAlert } = props;
 
     const [totalValue, setTotalValue] = useState(0);
     const [formatValue, setFormatValue] = useState(0);
-    const [currentLength, setCurrentLength] = useState(data.length);
+    const [currentLength, setCurrentLength] = useState(carrito.length);
 
     let today = new Date();
     let day = today.getDate();
     let month = today.getMonth() + 1;
     let year = today.getFullYear();
 
-    const finalizarCompra = () => {
-        console.log(data);
-        data.push({ total: totalValue })
-        arr.map(item => {
-            data.map(carro => {
-                item === carro ?
-                    item.stock = item.stock - carro.cantidadProductos
-                    : null
-            })
+    const realizarCompra = () => {
+        const compra = {
+            products: [],
+            total: 0
+        }
+        carrito.push({ total: totalValue })
+        
+        carrito.map( item => {
+            if ( !item.total ) {
+                compra.products.push({id: item.id, amount: item.cantidadProductos})
+            }
+            else {
+                compra.total = item.total;
+            }
         })
-        changeReload(!reload);
-        changeData([])
+
+        changeCarrito([])
         setAlert([true,{text: 'Tu orden se ha realizado exitosamente', type:'success'}])
         setTimeout( () => {setAlert([false,{}])}, 10000)
     }
 
     const cancelarCompra = () => {
-        changeData([])
+        changeCarrito([])
         setAlert([true,{text: 'Tu orden ha sido cancelada', type:'info'}])
         setTimeout( () => {setAlert([false,{}])}, 10000)
     }
 
     useEffect(() => {
-        setCurrentLength(data.length)
-        if (data.length > 0) {
+        setCurrentLength(carrito.length)
+        if (carrito.length > 0) {
 
-            if (data.length < currentLength) return
-            let item = data[data.length - 1];
+            if (carrito.length < currentLength) return
+            let item = carrito[carrito.length - 1];
 
-            setTotalValue(totalValue + Number(item.precio))
+            setTotalValue(totalValue + Number(item.price))
         }
         else setTotalValue(0)
-    }, [data])
+    }, [carrito])
 
     useEffect(() => {
         setFormatValue(totalValue.toLocaleString('en-US'))
@@ -66,13 +70,13 @@ export const Carrito = (props) => {
                             <div className="col mx-2 p-3 d-flex justify-content-between rounded" style={{ background: "#525964" }}>
                                 <div className="h-100 d-flex flex-column justify-content-between align-items-center">
                                     <span>{`${month}/${day}/${year}`}</span>
-                                    <p style={{ margin: "0px" }}><b>{data.length}</b> Articulos</p>
+                                    <p style={{ margin: "0px" }}><b>{carrito.length}</b> Articulos</p>
                                 </div>
                                 <h3 className="h-100 d-flex justify-content-center align-items-center">$ {formatValue}</h3>
                             </div>
                         </div>
                         {
-                            data.length === 0 ?
+                            carrito.length === 0 ?
                             <div className="row text-center">
                                 <p className="m-0">Aun no hay productos seleccionados</p>
                             </div>
@@ -83,22 +87,23 @@ export const Carrito = (props) => {
                         }
 
                         {
-                            data.map(item => (
+                            // Se recorre cada item que esté dentro del carrito
+                            carrito.map(item => (
                                 <CarritoItem
                                     key={item.id}
                                     carrito={item}
                                     totalValue={totalValue}
                                     changeValue={setTotalValue}
-                                    data={data}
-                                    changeData={changeData}
+                                    data={carrito}
+                                    changeCarrito={changeCarrito}
                                 />
                             ))
                         }
                         {
-                            data.length > 0 &&
+                            carrito.length > 0 &&
                             <div className="row">
                                 <button
-                                    onClick={finalizarCompra}
+                                    onClick={realizarCompra}
                                     data-bs-dismiss="offcanvas"
                                     className="btn btn-purple mt-3">Finalizar compra</button>
                                 <button

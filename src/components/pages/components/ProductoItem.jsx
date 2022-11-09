@@ -25,8 +25,13 @@ export const ProductoItem = (props) => {
             <div className="card card-producto position-relative">
                 <img src={data.img} className="card-img-top" alt="greta" />
                 <div className="card-body text-white text-white">
-                    <h5 className="card-title">{data.nombre}</h5>
-                    <p className="card-text"><i>{data.descripcion}</i></p>
+                    <h5 className="card-title">{data.name}</h5>
+                    {
+                        data.description ? 
+                        <p style={{fontSize:"14px"}} className="card-text"><i>{data.description}</i></p>
+                        :
+                        <p style={{fontSize:"14px"}} className="card-text"><i>(No hay descripción para este producto)</i></p>
+                    }
                     {
                         !deleteSelect
                             ?
@@ -39,7 +44,7 @@ export const ProductoItem = (props) => {
                             </a>
                     }
                 </div>
-                <p className="price">$ {Number(data.precio).toLocaleString('en-US')}</p>
+                <p className="price">$ {Number(data.price).toLocaleString('en-US')}</p>
             </div>
         </div>
     )

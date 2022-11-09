@@ -1,83 +1,86 @@
 #carritoItem img{
-    width: 100%;
-    height: auto;
+    width: 100px;
+    height: 60px;
     object-fit: cover;
-    border-bottom-left-radius: 5px;
-    border-top-left-radius: 5px;
+    object-position: center;
 }
-#carritoItem p.counter{
-    width: 20px;
+
+/* NUEVO DISEÑO PARA CARRITO */
+#carritoItem .myItem{
+    background-color:#525964;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: row;
+    height: 60px;
+    width: 90%;
+}
+#carritoItem .myItem .counter{
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+#carritoItem .myItem .counter .mas{
     height: 20px;
-    background-color: #000000a8;
-    border-radius: 50px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    top: 5px;
-    left:-10px;
-    font-size: 13px;
-}
-#carritoItem button.counter{
+    border-top-left-radius: 6px;
     border: none;
-    position: absolute;
-    width: 15px;
-    height: 15px;
-    border-radius: 50px;
     display: flex;
     align-items: center;
     justify-content: center;
-    padding-bottom: 3px;
-    left: -7px;
-    transition: .4s;
-    padding-left: 1px;
-}
-#carritoItem button.counter.a{
-    background-color: white;
-    top: 30px;
-    color: black;
-}
-#carritoItem button.counter.a:hover{
-    background-color: #cfcfcf;
-    transition: .4s;
-}
-#carritoItem button.counter.b{
-    background-color: #ff3737;
-    top: 52px;
     color: white;
-    padding-left: 0;
+    background-color: #006eff;
 }
-#carritoItem button.counter.b:hover{
-    background-color: #bd1e1e;
+#carritoItem .myItem .counter .menos{
+    height: 20px;
+    border-bottom-left-radius: 6px;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    background-color: #ff3c3c;
+}
+#carritoItem .myItem .counter .mas:hover{
+    background-color: #378dff;
     transition: .4s;
 }
-#carritoItem button.counter.x{
-    background-color: #ffffff;
-    top: -5px;
-    color: rgb(0, 0, 0);
-    padding-left: 0;
-    left: 97.6% !important;
-    font-weight: bold;
+#carritoItem .myItem .counter .menos:hover{
+    background-color: #ff6b6b;
+    transition: .4s;
 }
-#carritoItem .counter.x{
+#carritoItem .myItem .counter .number{
+    font-size: 13px;
+    margin: 0;
+    padding: 0px 3px;
+}
+#carritoItem .myItem .name-delete{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+#carritoItem .myItem .name{
+    align-items: center;
+    display: flex;
+    justify-content: center;
+    margin: 0;
+}
+#carritoItem .myItem .remove{
+    position: absolute;
+    right: 10px;
+    top: 20px;
+}
+#carritoItem .myItem .price{
+    position: absolute;
+    top: -10px;
+    left: 113px;
+    margin: 0;
+    background: #212529;
+    border-radius: 7px;
+    font-size: 12px;
+    padding: 0px 10px;
+}
+#carritoItem .myItem .remove:hover{
+    color: #ff3c3c;
     cursor: pointer;
     transition: .4s;
-}
-#carritoItem .counter.x:hover{
-    color: #ff3737;
-}
-#carritoItem button.counter.x:hover{
-    background-color: #bfbfbf;
-    transition: .4s;
-}
-#carritoItem h6{
-    font-size: 13px;
-    font-weight: 400;
-    position: absolute;
-    bottom: 0;
-    right: 0px;
-    background: #212529;
-    border-bottom-left-radius:6px;
-    border-top-left-radius:6px;
-    padding: 2px 10px;
 }
