@@ -16,6 +16,7 @@ export const ProductoItem = (props) => {
     }, [carrito])
 
     const handleDelete = ( item ) => {
+        console.log( item );
         setDeleteSelect( false )
         removeProduct( item )
     }

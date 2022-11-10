@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
+import { purchase } from "../../../api/user";
 
 // Helpers
 import { CarritoItem } from "./CarritoItem";
 
 export const Carrito = (props) => {
-    const { carrito, changeCarrito, reload, changeReload, setAlert } = props;
+    const { carrito, changeCarrito, totalValue, setTotalValue, setAlert, reloadMyData } = props;
 
-    const [totalValue, setTotalValue] = useState(0);
     const [formatValue, setFormatValue] = useState(0);
     const [currentLength, setCurrentLength] = useState(carrito.length);
+
+    const [pendingPurchase, setPendingPurchase] = useState({})
 
     let today = new Date();
     let day = today.getDate();
@@ -16,30 +18,40 @@ export const Carrito = (props) => {
     let year = today.getFullYear();
 
     const realizarCompra = () => {
+
+        purchase(pendingPurchase).then(resp => {
+            console.log(resp);
+        })
+
+        changeCarrito([])
+        setAlert([true, { text: 'Tu orden se ha realizado exitosamente', type: 'success' }])
+        reloadMyData();
+        setTimeout(() => { setAlert([false, {}]) }, 10000)
+    }
+
+    const validarCompra = () => {
+        console.log(carrito);
         const compra = {
             products: [],
-            total: 0
+            total: totalValue
         }
-        carrito.push({ total: totalValue })
-        
-        carrito.map( item => {
-            if ( !item.total ) {
-                compra.products.push({id: item.id, amount: item.cantidadProductos})
+
+        carrito.map(item => {
+            if (!item.total) {
+                compra.products.push({ id: item.id, amount: item.cantidadProductos })
             }
             else {
                 compra.total = item.total;
             }
         })
 
-        changeCarrito([])
-        setAlert([true,{text: 'Tu orden se ha realizado exitosamente', type:'success'}])
-        setTimeout( () => {setAlert([false,{}])}, 10000)
+        setPendingPurchase(compra);
     }
 
     const cancelarCompra = () => {
         changeCarrito([])
-        setAlert([true,{text: 'Tu orden ha sido cancelada', type:'info'}])
-        setTimeout( () => {setAlert([false,{}])}, 10000)
+        setAlert([true, { text: 'Tu orden ha sido cancelada', type: 'info' }])
+        setTimeout(() => { setAlert([false, {}]) }, 10000)
     }
 
     useEffect(() => {
@@ -69,7 +81,7 @@ export const Carrito = (props) => {
                         <div className="row mb-4">
                             <div className="col mx-2 p-3 d-flex justify-content-between rounded" style={{ background: "#525964" }}>
                                 <div className="h-100 d-flex flex-column justify-content-between align-items-center">
-                                    <span>{`${month}/${day}/${year}`}</span>
+                                    <span>{`${year}/${month}/${day}`}</span>
                                     <p style={{ margin: "0px" }}><b>{carrito.length}</b> Articulos</p>
                                 </div>
                                 <h3 className="h-100 d-flex justify-content-center align-items-center">$ {formatValue}</h3>
@@ -77,13 +89,13 @@ export const Carrito = (props) => {
                         </div>
                         {
                             carrito.length === 0 ?
-                            <div className="row text-center">
-                                <p className="m-0">Aun no hay productos seleccionados</p>
-                            </div>
-                            :
-                            <div className="row text-center">
-                                <p className="m-0">Productos</p>
-                            </div>
+                                <div className="row text-center">
+                                    <p className="m-0">Aun no hay productos seleccionados</p>
+                                </div>
+                                :
+                                <div className="row text-center">
+                                    <p className="m-0">Productos</p>
+                                </div>
                         }
 
                         {
@@ -103,8 +115,9 @@ export const Carrito = (props) => {
                             carrito.length > 0 &&
                             <div className="row">
                                 <button
-                                    onClick={realizarCompra}
-                                    data-bs-dismiss="offcanvas"
+                                    onClick={validarCompra}
+                                    data-bs-toggle="modal"
+                                    data-bs-target="#confirm"
                                     className="btn btn-purple mt-3">Finalizar compra</button>
                                 <button
                                     onClick={cancelarCompra}
@@ -113,6 +126,44 @@ export const Carrito = (props) => {
                             </div>
                         }
 
+                    </div>
+                </div>
+            </div>
+            {/*  Modal Confirmar Compra */}
+            <div className="modal fade" id="confirm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content text-bg-dark">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5" id="exampleModalLabel">Confirma tu pedido</h1>
+                            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                            ¿Estás seguro de realizar esta compra?
+
+                            <hr />
+                            {
+                                carrito.map(product => (
+                                    <div
+                                        className="m-0 d-flex justify-content-between pt-1"
+                                        style={{ borderBottom: "1px solid white" }}
+                                        key={product.id}
+                                    >
+                                        {product.name}  ({product.cantidadProductos})
+                                        <small>$ {(Number(product.price) * product.cantidadProductos).toLocaleString('en', 'US')}</small>
+                                    </div>
+                                ))
+                            }
+                            <div
+                                className="m-0 d-flex justify-content-between pt-1"
+                            >
+                                <b>Total</b>
+                                <small>${Number(totalValue).toLocaleString('en', 'US')}</small>
+                            </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                            <button type="button" onClick={realizarCompra} className="btn btn-success" data-bs-dismiss="modal">Confirmar</button>
+                        </div>
                     </div>
                 </div>
             </div>

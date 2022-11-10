@@ -4,6 +4,7 @@ import { URL } from './linkConnection';
 export const getAllCategories = async () => {
 
     const categories = await axios(`${URL}/api/categories`)
+    console.log( categories );
     return categories.data.categories;
 
 }

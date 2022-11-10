@@ -1,10 +1,8 @@
 import { useState, createContext } from "react"
 
 const UserContext = createContext({
-    email: null,
-    img: null,
-    name: null,
-    role: null,
+    isLogged: null,
+    hasRole: null
 });
 
 export default UserContext;

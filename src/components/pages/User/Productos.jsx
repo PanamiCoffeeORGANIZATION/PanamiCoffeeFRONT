@@ -18,10 +18,14 @@ import { getAllProducts } from "../../../api/product"
 
 // Styles
 import '../styles.css'
+import useUser from "../../../hooks/useUser"
+import { useNavigate } from "react-router"
 
 export const Productos = () => {
 
     const [carrito, setCarrito] = useState([]);
+    const [totalValue, setTotalValue] = useState(0);
+
     const [category, setCategory] = useState("TODO");
     const [reload, setReload] = useState(false);
     const [alert, setAlert] = useState([false, {}])
@@ -32,18 +36,27 @@ export const Productos = () => {
     const [productos, setProductos] = useState([]);
     const [categories, setCategories] = useState([]);
 
+    const logged = useUser();
+    const navigate = useNavigate();
+
     const addProduct = (item) => {
+        logged.isLogged !== 1 && navigate('/login');
         item.cantidadProductos = 1;
         setCarrito([...carrito, item]);
     }
     const removeProduct = (item) => {
+        // Busco el producto en el carrito
+        const [itemCarrito] = carrito.filter(itemCart => itemCart.id === item.id);
+        // Resto el producto * unidades del total
+        console.log(itemCarrito);
+        setTotalValue(totalValue - (itemCarrito.price * itemCarrito.cantidadProductos))
         setCarrito(carrito.filter(element => element.id !== item.id));
     }
 
     const handleCategory = (item) => {
+        setCategory(item);
         setCategoryLoader(true);
         if (item === "TODO") return getApi();
-        setCategory(item);
         getProductsByCategory(item)
             .then(resp => {
                 setCategoryLoader(false);
@@ -62,9 +75,19 @@ export const Productos = () => {
         setCategoryLoader(false);
     }
 
+    const reloadMyData = () => {
+        // De momento no sé porqué las unidades no se actualizan inmediatamente
+        setLoading(true);
+        setTimeout(() => {
+            getApi();
+        }, 1000)
+    }
+
     useEffect(() => {
+        setLoading(true);
         getApi();
     }, [reload])
+
 
     return (
         <>
@@ -75,42 +98,46 @@ export const Productos = () => {
                     <NavbarLayout carrito={carrito.length} />
             }
             <section id="productos" className="scroll">
-                <div className="container p-lg-5 p-2 p-md-5 d-flex justify-content-center flex-column align-items-center">
-                    <div className="row categories-div scroll mb-5">
+                <div className="container p-lg-5 p-2 p-md-3 d-flex justify-content-center flex-column align-items-center">
+                    <div className="row categories-div scroll mb-4">
                         {
                             alert[0] && <AlertUI text={alert[1].text} type={alert[1].type} close={setAlert} />
                         }
-                        <button
-                            onClick={() => handleCategory("TODO")}
-                            className={`btn btn-${category === "TODO" ? "yellow" : "secondary"}`}
-                        >
-                            {
-                                category === "TODO" && categoryLoader ?
-                                    <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                    :
-                                    "TODO"
-                            }
-                        </button>
                         {
                             loading ?
                                 [1, 2, 3, 4, 5, 6].map(item => (
                                     <button key={item} className="placeholder"></button>
                                 ))
                                 :
-                                categories.map(item => (
+                                <>
                                     <button
-                                        key={item.id}
-                                        onClick={() => handleCategory(item.id)}
-                                        className={`btn btn-${category === item.id ? "yellow" : "secondary"}`}
+                                        onClick={() => handleCategory("TODO")}
+                                        className={`btn btn-${category === "TODO" ? "yellow" : "secondary"}`}
                                     >
                                         {
-                                            category === item.id && categoryLoader ?
+                                            category === "TODO" && categoryLoader ?
                                                 <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
                                                 :
-                                                item.name
+                                                "TODO"
                                         }
                                     </button>
-                                ))
+                                    {
+                                        categories.map(item => (
+                                            <button
+                                                key={item.id}
+                                                onClick={() => handleCategory(item.id)}
+                                                className={`btn btn-${category === item.id ? "yellow" : "secondary"}`}
+                                            >
+                                                {
+                                                    category === item.id && categoryLoader ?
+                                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                                                        :
+                                                        item.name
+                                                }
+                                            </button>
+                                        ))
+                                    }
+                                </>
                         }
                     </div>
                     <div className="row d-flex flex-row">
@@ -152,6 +179,9 @@ export const Productos = () => {
                 carrito={carrito}
                 changeCarrito={setCarrito}
                 setAlert={setAlert}
+                reloadMyData={reloadMyData}
+                totalValue={totalValue}
+                setTotalValue={setTotalValue}
             />
         </>
     )

@@ -1,4 +1,5 @@
 import axios from "axios";
+import { validateToken } from "../helpers/validateToken";
 import { URL } from './linkConnection';
 
 // LOG-IN
@@ -45,3 +46,31 @@ export const getOneUser = async ( uid ) => {
     return user.data.user;
 
 }
+
+// PURCHASE
+export const purchase = async (data) => {
+
+    const { ok = false , token } = await validateToken();
+    if ( !ok ) return;
+
+    try {
+        const res = await axios
+            .put(`${URL}/api/users/purchase`,{
+                cant: data.products.length,
+                products: data.products,
+                total: data.total
+            },
+            {
+                headers: {
+                    'x-token':token
+                }
+            })
+            .then((resp) => resp.data )
+            .catch((error) => error.response.data );
+
+            return res;
+
+    } catch (error) {
+        console.log(error);
+    }
+};

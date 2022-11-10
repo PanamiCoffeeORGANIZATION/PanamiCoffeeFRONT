@@ -6,6 +6,6 @@ export const AlertUI = (props) => {
     const { text, type, close } = props;
 
     return (
-        <Alert className="alert" severity={type} onClose={() => {close([false])}}>{text}</Alert>
+        <Alert style={{zIndex:"10000"}} className="alert" severity={type} onClose={() => {close([false])}}>{text}</Alert>
     )
 }
