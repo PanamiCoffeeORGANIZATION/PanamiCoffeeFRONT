@@ -15,12 +15,12 @@ export const NavbarLayoutAdmin = (props) => {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
-                        <Link to="/admin/productos" className="nav-item">
-                            <a className="nav-link" href="#">Productos</a>
-                        </Link>
-                        <Link to="/admin/ventas" className="nav-item">
-                            <a className="nav-link" href="#">Ventas</a>
-                        </Link>
+                        <li className="nav-item">
+                            <Link to="/admin/productos" className="nav-link">Productos</Link>
+                        </li>
+                        <li className="nav-item">
+                            <Link to="/admin/ventas" className="nav-link" href="#">Ventas</Link>
+                        </li>
                     </ul>
                 </div>
             </div>

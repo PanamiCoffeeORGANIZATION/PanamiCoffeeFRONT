@@ -20,6 +20,7 @@ import { getAllProducts } from "../../../api/product"
 import '../styles.css'
 import useUser from "../../../hooks/useUser"
 import { useNavigate } from "react-router"
+import { SelectCategoriy } from "../../layouts/Modals/Products/SelectCategoriy"
 
 export const Productos = () => {
 
@@ -95,51 +96,16 @@ export const Productos = () => {
                 loading ?
                     <HeaderPlaceholder />
                     :
-                    <NavbarLayout carrito={carrito.length} />
+                    <>
+                        <NavbarLayout carrito={carrito.length} />
+                    </>
             }
             <section id="productos" className="scroll">
+                <div className="select-category">
+                    <button class="btn btn-primary select-category" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSelectCategory" aria-controls="offcanvasWithBothOptions">Seleccionar categorías</button>
+                </div>
                 <div className="container p-lg-5 p-2 p-md-3 d-flex justify-content-center flex-column align-items-center">
-                    <div className="row categories-div scroll mb-4">
-                        {
-                            alert[0] && <AlertUI text={alert[1].text} type={alert[1].type} close={setAlert} />
-                        }
-                        {
-                            loading ?
-                                [1, 2, 3, 4, 5, 6].map(item => (
-                                    <button key={item} className="placeholder"></button>
-                                ))
-                                :
-                                <>
-                                    <button
-                                        onClick={() => handleCategory("TODO")}
-                                        className={`btn btn-${category === "TODO" ? "yellow" : "secondary"}`}
-                                    >
-                                        {
-                                            category === "TODO" && categoryLoader ?
-                                                <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                :
-                                                "TODO"
-                                        }
-                                    </button>
-                                    {
-                                        categories.map(item => (
-                                            <button
-                                                key={item.id}
-                                                onClick={() => handleCategory(item.id)}
-                                                className={`btn btn-${category === item.id ? "yellow" : "secondary"}`}
-                                            >
-                                                {
-                                                    category === item.id && categoryLoader ?
-                                                        <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
-                                                        :
-                                                        item.name
-                                                }
-                                            </button>
-                                        ))
-                                    }
-                                </>
-                        }
-                    </div>
+                    {alert[0] && <AlertUI text={alert[1].text} type={alert[1].type} close={setAlert} />}
                     <div className="row d-flex flex-row">
                         {
                             loading ?
@@ -183,6 +149,8 @@ export const Productos = () => {
                 totalValue={totalValue}
                 setTotalValue={setTotalValue}
             />
+            {/* MODALS */}
+            <SelectCategoriy categories={categories} handleCategory={handleCategory} category={category} categoryLoader={categoryLoader} />
         </>
     )
 }

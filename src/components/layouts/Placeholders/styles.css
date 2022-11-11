@@ -28,7 +28,19 @@
     height: 10px;
 }
 
-
+/* FULL SCREEN */
+section#fullscreen-placeholder{
+    align-items: center;
+    background-color: #223147;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    width: 100vw;
+}
+section#fullscreen-placeholder .blowing{
+    height: 3em;
+    width: 3em;
+}
 @keyframes placeholderGray {
     0%{
         background-color: #949494;

@@ -68,6 +68,22 @@ section#productos div.categories-div button{
     align-items: center;
     justify-content: center;
 }
+section#productos button.select-category{
+    border-radius: 0px 0px 20px 20px;
+    border: none;
+    background-color: #223147;
+}
+section#productos button.select-category:hover{
+    background-color: #314666;
+    transition: .4s;
+}
+section#productos div.select-category{
+    position: fixed;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    z-index: 100;
+}
 div.card-producto{
     background-color: #525964 !important;
 }

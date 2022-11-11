@@ -1,0 +1,18 @@
+#offcanvasSelectCategory .btn-categories{
+    background: transparent;
+    border: none;
+    color: white;
+    padding: 5px 0px;
+    text-align: left;
+    transition: .4s;
+    width: 100%;
+}
+#offcanvasSelectCategory .btn-categories:hover{
+    background-color: #314666;
+    padding: 5px 20px;
+    transition: .4s;
+}
+#offcanvasSelectCategory .btn-categories.active{
+    background-color: #314666;
+    padding: 5px 20px;
+}
