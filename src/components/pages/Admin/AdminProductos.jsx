@@ -7,10 +7,19 @@ import { RiPencilFill, RiDeleteBin4Fill } from "react-icons/ri";
 import { HiIdentification } from "react-icons/hi";
 // Componentes
 import { NavbarLayoutAdmin } from "../../layouts/NavbarLayoutAdmin";
+import { FullScreenPlaceholder } from "../../layouts/Placeholders/FullScreenPlaceholder";
 
 // Helpers
 import { arr } from "../../../helpers/data";
 import { Alert, Pagination } from "@mui/material";
+import { AddProduct } from "../../layouts/Modals/Admin/AddProduct";
+
+// Api
+import { getAllCategories } from "../../../api/category";
+import { deleteProduct, getProductsByPage } from "../../../api/product";
+import { getProductsByName } from "../../../api/search";
+import { EditProduct } from "../../layouts/Modals/Admin/EditProduct";
+import { AlertUI } from "../../UI/Alert";
 
 
 export const AdminProductos = () => {
@@ -18,199 +27,210 @@ export const AdminProductos = () => {
     const [data, setData] = useState(arr);
     const [dataModal, setDataModal] = useState([])
     const [reload, setReload] = useState(false);
-    const [successAlert, setSuccessAlert] = useState(false);
     const [editAlert, setEditAlert] = useState(false);
+    const [count, setCount] = useState(0);
+    const [inpSearch, setInpSearch] = useState("");
 
-    // Inputs para edición
-    const [inpNombre, setInpNombre] = useState("");
-    const [inpDescripcion, setInpDescripcion] = useState("");
-    const [inpStock, setInpStock] = useState("");
-    const [inpImg, setInpImg] = useState("");
-    const [inpCategoria, setInpCategoria] = useState("");
-    const [inpPrecio, setInpPrecio] = useState("")
+    const [categories, setCategories] = useState([]);
+    const [products, setProducts] = useState([]);
+    const [productEdit, setProductEdit] = useState({});
 
-    const handleDescription = ({ id, descripcion, img }) => {
-        // 0 -> id
+    const [loading, setLoading] = useState(true);
+    const [loadingProducts, setLoadingProducts] = useState(false);
+    const [loadingPage, setLoadingPage] = useState(true);
+    const [warning, setWarning] = useState({ok: false, msg: "", type: ""});
+
+    const handleSearch = async () => {
+        if ( inpSearch.length === 0 ) return;
+
+        setLoadingPage( false );
+        setLoadingProducts( true );
+        const result = await getProductsByName( inpSearch );
+        setProducts( result.result );
+        setLoadingProducts( false );
+    }
+    // Volver de la busqueda por producto
+    const returnToAll = () => {
+        setLoadingProducts( true );
+        setLoadingPage( true );
+        setInpSearch("");
+        getApi();
+    }
+
+    const handleDescription = ({ name, description, img }) => {
+        // 0 -> name
         // 1 -> descripcion
         // 2 -> img
-        setDataModal([id, descripcion, img])
+        setDataModal([name, description, img])
     }
 
-    const llenarCamposEdicion = (item) => {
-        setEditAlert( false );
-        setDataModal([item.id])
-        setInpNombre(item.nombre);
-        setInpCategoria(item.categoria);
-        setInpImg(item.img);
-        setInpStock(item.stock);
-        setInpPrecio(item.precio);
-        setInpDescripcion(item.descripcion);
+    const getApi = async () => {
+
+        setCategories(await getAllCategories());
+        const data = await getProductsByPage();
+        setProducts(data.products);
+
+        const stringCount = String(data.total / 5);
+        const total = stringCount.split(".")[1] ? Number(stringCount.split(".")[0]) + 1 : Number(stringCount);
+
+        setCount(total)
+        setLoading(false);
+        setLoadingProducts( false );
     }
 
-    const openCreate = () => {
-        setSuccessAlert(false);
-        cleanInputs();
+    const handlePage = async (e, newPage) => {
+        setLoadingProducts(true);
+        const { products } = await getProductsByPage((newPage * 5) - 5);
+        setProducts(products)
+        setLoadingProducts(false);
     }
 
-    const cleanInputs = () => {
-        setDataModal("");
-        setInpNombre("");
-        setInpCategoria("");
-        setInpImg("");
-        setInpStock("");
-        setInpDescripcion("");
-        setInpPrecio("");
+    const handleEdit = ( item ) => {
+
+        handleDescription( item );
+        setProductEdit( item );
+
     }
 
-    const createProduct = e => {
-        e.preventDefault();
-
-        console.log("CREAR");
-
-        const newProduct = {
-            id: arr.length + 1,
-            nombre: inpNombre,
-            precio: inpPrecio,
-            descripcion: inpDescripcion,
-            img: "https://img.freepik.com/vector-premium/dibujos-animados-ilustracion-bolsa-compras-carrito-compras-diseno-estilo-lindo-camiseta-pegatina-elemento-logotipo_152558-9062.jpg",
-            stock: inpStock,
-            categoria: inpCategoria
-        }
-        arr.push(newProduct);
-        setSuccessAlert(true);
-        cleanInputs();
-        setTimeout(() => { setSuccessAlert(false) }, 3000);
-        setReload(!reload);
-    }
-
-    const editProduct = e => {
-        e.preventDefault();
-
-        const newProduct = {
-            id: dataModal[0],
-            nombre: inpNombre,
-            precio: inpPrecio,
-            descripcion: inpDescripcion,
-            stock: inpStock,
-            categoria: inpCategoria
-        }
-
-        arr.map((item, index) => {
-            if (item.id === dataModal[0]) {
-                newProduct.img = item.img,
-                    arr[index] = newProduct;
-                setReload(!reload);
-            }
-        });
-
-        setEditAlert(true);
-        setTimeout(() => { setEditAlert(false) }, 3000);
-    }
-
-    const handlePage = (e, newPage) => {
-        console.log( newPage );
+    const handleDelete = async id => {
+        const { ok, msg } = await deleteProduct( id );
+        ok ? 
+        setWarning({ok: true, msg , type: "success"}) 
+        :
+        setWarning({ok: true, msg: "Hubo un error al eliminar el producto", type: "error"});
+        setTimeout( () => setWarning({ok: false, msg: "", type: ""}), 3000)
+        setReload( !reload );
     }
 
     useEffect(() => {
+        getApi();
         setData(arr);
     }, [reload])
-
-    const handleNombre = e => setInpNombre(e.target.value);
-    const handleCategoria = e => setInpCategoria(e.target.value);
-    const handleImg = e => setInpImg(e.target.value);
-    const handleDescripcion = e => setInpDescripcion(e.target.value);
-    const handlePrecio = e => setInpPrecio(e.target.value);
-    const handleStock = e => setInpStock(e.target.value);
 
 
     return (
         <>
-            <NavbarLayoutAdmin />
-            <div id="admin-productos" className="bg-dark scroll pb-5" style={{ height: "calc(100vh - 68px)", overflowY:"scroll"}}>
-                <div className="container">
-                    <div className="row">
-                        <button
-                            onClick={openCreate}
-                            style={{ width: "200px" }}
-                            data-bs-toggle="modal"
-                            data-bs-target="#create-modal"
-                            className="btn btn-purple mt-5"
-                        ><BsFillBagPlusFill style={{ marginTop: "-6px", marginRight: "7px" }} />
-                            Agregar producto
-                        </button>
-                    </div>
-                    <div className="row">
-                        <div className="col mt-5">
-                            <table className="table table-dark table-striped">
-                                <thead>
-                                    <tr>
-                                        <th scope="col">ID</th>
-                                        <th scope="col">Nombre</th>
-                                        <th scope="col">Categoria</th>
-                                        <th scope="col">Precio</th>
-                                        <th scope="col">Imagen</th>
-                                        <th scope="col">Descripción</th>
-                                        <th scope="col">Stock</th>
-                                        <th scope="col">Acciones</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
+            {
+                loading ?
+                    <FullScreenPlaceholder />
+                    :
+                    <>
+                        <NavbarLayoutAdmin />
+                        <div id="admin-productos" className="bg-dark scroll pb-5" style={{ height: "calc(100vh - 68px)", overflowY: "scroll" }}>
+                            <div className="container">
+                                {
+                                    warning.ok && <AlertUI text={warning.msg} type={warning.type} />
+                                }
+                                <div className="row">
+                                    <button
+                                        style={{ width: "200px" }}
+                                        data-bs-toggle="modal"
+                                        data-bs-target="#create-modal"
+                                        className="btn btn-purple mt-5"
+                                    ><BsFillBagPlusFill style={{ marginTop: "-6px", marginRight: "7px" }} />
+                                        Agregar producto
+                                    </button>
+                                </div>
+                                {/* BUSCADOR ------------------------------ */}
+                                <div className="row mt-4">
+                                    <div className="col-lg-4 col-sm-8">
+                                        <div className="input-group mb-3">
+                                            <input value={inpSearch} onChange={ e => setInpSearch( e.target.value ) } type="text" className="form-control text-bg-dark" placeholder="Buscador de productos" aria-label="Buscador de productos" aria-describedby="button-addon2" />
+                                            <button className="btn btn-secondary" type="button" id="button-addon2" onClick={handleSearch}>Button</button>
+                                        </div>
+                                    </div>
                                     {
-                                        data.map(item => (
-                                            <tr key={item.id}>
-                                                <th scope="row">{item.id}</th>
-                                                <td>{item.nombre}</td>
-                                                <td>{item.categoria}</td>
-                                                <td>${Number(item.precio).toLocaleString('en-US')}</td>
-                                                <td>
-                                                    <label htmlFor="imgFile">
-                                                        <button
-                                                            className="btn btn-purple"
-                                                            data-bs-toggle="modal"
-                                                            data-bs-target="#img-modal"
-                                                            onClick={() => handleDescription(item)}
-                                                        >
-                                                            <BsImages />
-                                                        </button>
-                                                        <input id="imgFile" type="file" style={{ display: "none" }} />
-                                                    </label>
-                                                </td>
-                                                <td>
-                                                    <button
-                                                        className="btn btn-secondary"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#desc-modal"
-                                                        onClick={() => handleDescription(item)}
-                                                    >
-                                                        <MdDescription />
-                                                    </button>
-                                                </td>
-                                                <td>{item.stock}</td>
-                                                <td>
-                                                    <button
-                                                        className="btn btn-primary m-1"
-                                                        data-bs-toggle="modal"
-                                                        data-bs-target="#edit-modal"
-                                                        onClick={() => llenarCamposEdicion(item)}
-                                                    >
-                                                        <RiPencilFill />
-                                                    </button>
-                                                    <button className="btn btn-danger m-1">
-                                                        <RiDeleteBin4Fill />
-                                                    </button>
-                                                </td>
-                                            </tr>
-                                        ))
+                                        !loadingPage &&
+                                        <div className="col-2">
+                                            <button onClick={returnToAll} className="btn btn-primary">Volver</button>
+                                        </div>
                                     }
-                                </tbody>
-                            </table>
+                                </div>
+                                {/* /BUSCADOR ------------------------------ */}
+                                <div className="row">
+                                    <div className="col mt-2">
+                                        {
+                                            loadingProducts ?
+                                                <div className="d-flex justify-content-center my-5">
+                                                    <div className="spinner-border text-secondary" role="status">
+                                                        <span className="visually-hidden">Loading...</span>
+                                                    </div>
+                                                </div>
+                                                :
+                                                <table className="table table-dark table-striped">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col">Nombre</th>
+                                                            <th scope="col">Categoria</th>
+                                                            <th scope="col">Precio</th>
+                                                            <th scope="col">Stock</th>
+                                                            <th scope="col">Imagen</th>
+                                                            <th scope="col">Descripción</th>
+                                                            <th scope="col">Acciones</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        {
+                                                            products.map(item => (
+                                                                <tr key={item.id}>
+                                                                    <td>{item.name}</td>
+                                                                    <td>{item.category.name}</td>
+                                                                    <td>${Number(item.price).toLocaleString('en-US')}</td>
+                                                                    <td style={item.stock <= 0 ? {color: "#dc3545"} : {color: "#77ff77"}}>{item.stock}</td>
+                                                                    <td>
+                                                                        <label htmlFor="imgFile">
+                                                                            <button
+                                                                                className="btn btn-purple"
+                                                                                data-bs-toggle="modal"
+                                                                                data-bs-target="#img-modal"
+                                                                                onClick={() => handleDescription(item)}
+                                                                            >
+                                                                                <BsImages />
+                                                                            </button>
+                                                                            <input id="imgFile" type="file" style={{ display: "none" }} />
+                                                                        </label>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button
+                                                                            className="btn btn-secondary"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#desc-modal"
+                                                                            onClick={() => handleDescription(item)}
+                                                                        >
+                                                                            <MdDescription />
+                                                                        </button>
+                                                                    </td>
+                                                                    <td>
+                                                                        <button
+                                                                            className="btn btn-primary m-1"
+                                                                            data-bs-toggle="modal"
+                                                                            data-bs-target="#edit-modal"
+                                                                            onClick={() => handleEdit(item)}
+                                                                        >
+                                                                            <RiPencilFill />
+                                                                        </button>
+                                                                        <button className="btn btn-danger m-1" onClick={ () => handleDelete(item.id)}>
+                                                                            <RiDeleteBin4Fill />
+                                                                        </button>
+                                                                    </td>
+                                                                </tr>
+                                                            ))
+                                                        }
+                                                    </tbody>
+                                                </table>
+                                        }
+                                    </div>
+                                </div>
+                                {
+                                    loadingPage &&
+                                    <div style={{ background: "#2c3034" }} className="row w-auto rounded p-2 d-flex justify-content-center align-items-center">
+                                        <Pagination onChange={handlePage} count={count} color="secondary" className="w-auto" />
+                                    </div>
+                                }
+                            </div>
                         </div>
-                    </div>
-                    <div style={{background: "#2c3034"}} className="row w-auto rounded p-2 d-flex justify-content-center align-items-center">
-                        <Pagination onChange={handlePage} count={10} color="secondary" className="w-auto"/>
-                    </div>
-                </div>
-            </div>
+                    </>
+            }
             {/* Modal */}
             <div className="modal fade" tabIndex="-1" id="desc-modal">
                 <div className="modal-dialog modal-dialog-centered">
@@ -220,7 +240,11 @@ export const AdminProductos = () => {
                             <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <p>{dataModal[1]}</p>
+                            <p>
+                                {
+                                    dataModal[1] ? dataModal[1] : "(No hay descripción para este producto)"
+                                }
+                            </p>
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -245,124 +269,9 @@ export const AdminProductos = () => {
                 </div>
             </div>
             {/* Modal Agregar */}
-            <div className="modal fade" data-target="myModalCreate" tabIndex="-1" id="create-modal">
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content bg-dark text-white">
-                        <div className="modal-header">
-                            <h5 className="modal-title"><BsFillBagPlusFill /> Crear producto</h5>
-                            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <form>
-                                <div className="mb-1 row">
-                                    <div className="col-8">
-                                        <label htmlFor="nombre">Nombre</label>
-                                        <input onChange={handleNombre} value={inpNombre} type="text" className="form-control" id="nombre" />
-                                    </div>
-                                    <div className="col-4">
-                                        <label htmlFor="categoria">Categoria</label>
-                                        <input onChange={handleCategoria} value={inpCategoria} type="text" className="form-control" id="categoria" />
-                                    </div>
-                                </div>
-                                <div className="mb-1">
-                                    <label htmlFor="descripcion">Descripción</label>
-                                    <textarea onChange={handleDescripcion} value={inpDescripcion} type="text" className="form-control" id="descripcion"></textarea>
-                                </div>
-                                <div className="mb-1 row">
-                                    <div className="col-8">
-                                        <label htmlFor="img">Precio</label>
-                                        <input onChange={handlePrecio} value={inpPrecio} type="text" className="form-control" id="img" />
-                                    </div>
-                                    <div className="col-4">
-                                        <label htmlFor="stock">Stock</label>
-                                        <input onChange={handleStock} value={inpStock} type="text" className="form-control" id="stock" />
-                                    </div>
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="img">Selecciona una imagen</label>
-                                    <input onChange={handleImg} type="file" className="form-control" id="img" />
-                                </div>
-
-                                {
-                                    successAlert ?
-                                        <Alert variant="filled" severity="success">
-                                            Producto creado con exito
-                                        </Alert>
-                                        :
-                                        <button
-                                            onClick={createProduct}
-                                            type="submit"
-                                            className="btn btn-primary"
-                                        // disabled={!inpNombre || !inpCategoria || !inpDescripcion || !inpStock || !inpPrecio}
-                                        >Crear producto</button>
-                                }
-                            </form>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <AddProduct categories={categories} reload={reload} setReload={setReload}/>
             {/* Modal Edición */}
-            <div className="modal fade" tabIndex="-1" id="edit-modal">
-                <div className="modal-dialog modal-dialog-centered">
-                    <div className="modal-content bg-dark text-white">
-                        <div className="modal-header">
-                            <h5 className="modal-title">Edición <br /><HiIdentification /> {dataModal[0]}</h5>
-                            <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                        </div>
-                        <div className="modal-body">
-                            <form>
-                                <div className="mb-1 row">
-                                    <div className="col-8">
-                                        <label htmlFor="nombre">Nombre</label>
-                                        <input onChange={handleNombre} value={inpNombre} type="text" className="form-control" id="nombre" />
-                                    </div>
-                                    <div className="col-4">
-                                        <label htmlFor="categoria">Categoria</label>
-                                        <input onChange={handleCategoria} value={inpCategoria} type="text" className="form-control" id="categoria" />
-                                    </div>
-                                </div>
-                                <div className="mb-1">
-                                    <label htmlFor="descripcion">Descripción</label>
-                                    <textarea onChange={handleDescripcion} value={inpDescripcion} type="text" className="form-control" id="descripcion"></textarea>
-                                </div>
-                                <div className="mb-1 row">
-                                    <div className="col-8">
-                                        <label htmlFor="img">Precio</label>
-                                        <input onChange={handlePrecio} value={inpPrecio} type="number" className="form-control" id="img" />
-                                    </div>
-                                    <div className="col-4">
-                                        <label htmlFor="stock">Stock</label>
-                                        <input onChange={handleStock} value={inpStock} type="text" className="form-control" id="stock" />
-                                    </div>
-                                </div>
-                                <div className="mb-3">
-                                    <label htmlFor="img">Selecciona una imagen</label>
-                                    <input onChange={handleImg} type="file" className="form-control" id="img" />
-                                </div>
-                                {
-                                    editAlert ?
-                                        <Alert variant="filled" severity="success">
-                                            Producto actualizado con exito
-                                        </Alert>
-                                        :
-                                        <button
-                                            onClick={editProduct}
-                                            type="submit"
-                                            className="btn btn-primary"
-                                            disabled={!inpNombre || !inpCategoria || !inpDescripcion || !inpStock || !inpPrecio}
-                                        >Editar producto</button>
-                                }
-                            </form>
-                        </div>
-                        <div className="modal-footer">
-                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            <EditProduct dataModal={dataModal} reload={reload} setReload={setReload} editAlert={editAlert} product={productEdit} categories={categories}/>
         </>
     )
 }

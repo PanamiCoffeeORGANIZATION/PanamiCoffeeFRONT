@@ -61,6 +61,7 @@ body {
 
 .navbar-myDark a {
     color: white !important;
+    transition: .3s;
 }
 
 .navbar-myDark a.disabled {
@@ -69,6 +70,12 @@ body {
 
 .dropdown-menu a:hover {
     background-color: #223147 !important;
+    transition: .3s;
+
+}
+.dropdown-menu a.cerrar:hover {
+    background-color: #ff4242 !important;
+    transition: .4s;
 
 }
 
