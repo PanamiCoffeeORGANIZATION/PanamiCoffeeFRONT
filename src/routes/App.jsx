@@ -3,6 +3,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { AdminProductos } from '../components/pages/Admin/AdminProductos';
 import { Ventas } from '../components/pages/Admin/Ventas';
 import { useEffect, useState } from 'react'
+import UserContext from '../context/UserContext';
 
 // Components - Pages
 import { Login } from '../components/pages/Auth/Login';
@@ -10,9 +11,9 @@ import { Register } from '../components/pages/Auth/Register';
 import { Productos } from '../components/pages/User/Productos';
 import { NoneValidation } from '../components/pages/components/Errors/NoneValidation';
 import { Error404 } from '../components/pages/components/Errors/404';
-import UserContext from '../context/UserContext';
 import { validateToken } from '../helpers/validateToken';
 import { FullScreenPlaceholder } from '../components/layouts/Placeholders/FullScreenPlaceholder';
+import { Home } from '../components/pages/Home';
 
 
 function App() {
@@ -25,14 +26,14 @@ function App() {
     if (localStorage.getItem("token")) {
       const { ok, token, user } = await validateToken(localStorage.getItem("token"));
       ok ? setIsLogged({ auth: true, role: user.role })
-      : setIsLogged({ auth: false, role: "" })
-      
+        : setIsLogged({ auth: false, role: "" })
+
     }
     else {
       setIsLogged({ auth: false, role: "" })
     }
 
-    setLoading( false );
+    setLoading(false);
   }
 
   useEffect(() => {
