@@ -13,7 +13,7 @@ import { HeaderPlaceholder } from "../../layouts/Placeholders/HeaderPlaceholder"
 import empty from '../../../assets/images/varios/empty.png'
 
 // API
-import { getAllCategories, getOneCategory } from "../../../api/category"
+import { getAllCategories } from "../../../api/category"
 import { getAllProducts } from "../../../api/product"
 
 // Styles
@@ -22,8 +22,9 @@ import useUser from "../../../hooks/useUser"
 import { useNavigate } from "react-router"
 import { SelectCategoriy } from "../../layouts/Modals/Products/SelectCategoriy"
 
-export const Productos = () => {
+export const Productos = ( props ) => {
 
+    const userLogged = useUser();
     const [carrito, setCarrito] = useState([]);
     const [totalValue, setTotalValue] = useState(0);
 
@@ -37,11 +38,7 @@ export const Productos = () => {
     const [productos, setProductos] = useState([]);
     const [categories, setCategories] = useState([]);
 
-    const logged = useUser();
-    const navigate = useNavigate();
-
     const addProduct = (item) => {
-        logged.isLogged !== 1 && navigate('/login');
         item.cantidadProductos = 1;
         setCarrito([...carrito, item]);
     }
@@ -102,7 +99,7 @@ export const Productos = () => {
             }
             <section id="productos" className="scroll">
                 <div className="select-category">
-                    <button class="btn btn-primary select-category" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSelectCategory" aria-controls="offcanvasWithBothOptions">Seleccionar categorías</button>
+                    <button className="btn btn-primary select-category" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasSelectCategory" aria-controls="offcanvasWithBothOptions">Seleccionar categorías</button>
                 </div>
                 <div className="container p-lg-5 p-2 p-md-3 d-flex justify-content-center flex-column align-items-center">
                     {alert[0] && <AlertUI text={alert[1].text} type={alert[1].type} close={setAlert} />}

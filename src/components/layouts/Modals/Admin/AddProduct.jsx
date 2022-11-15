@@ -3,12 +3,52 @@ import { ErrorMessage, Field, Form, Formik } from 'formik';
 import React from 'react'
 import { useState } from 'react';
 import { BsFillBagPlusFill } from 'react-icons/bs'
+import { addProduct } from '../../../../api/admin';
+import { ButtonSpinner } from '../../../UI/ButtonSpinner';
 
 export const AddProduct = (props) => {
 
-    const { createProduct, categories } = props;
+    const { categories, reload, setReload } = props;
 
     const [successAlert, setSuccessAlert] = useState(false);
+    const [warning, setWarning] = useState({ ok: false, msg: "", type: "" })
+    const [loadingCreate, setLoadingCreate] = useState(false);
+
+    const createProduct = async (values, resetForm) => {
+
+        setLoadingCreate(true);
+        const { ok, msg, ...rest } = await addProduct(values);
+
+        // Si la consulta tiene errores en la respuesta ( middlewares ) 
+        if (rest.errors) {
+            setWarning({
+                ok: true,
+                msg: `${rest.errors[0].msg} (${rest.errors[0].param})`,
+                type: "error"
+            })
+        }
+        // // Si la respuesta trae un ok 
+        else if (ok) {
+            setWarning({
+                ok: true,
+                msg: msg,
+                type: "success"
+            })
+            resetForm();
+            setReload( !reload );
+        }
+        else {
+            setWarning({
+                ok: true,
+                msg: msg,
+                type: "error"
+            })
+        }
+
+        setLoadingCreate(false);
+        setTimeout( () => setWarning({ ok: false, msg: "", type: "" }), 5000);
+
+    }
 
     return (
         <div className="modal fade" data-target="myModalCreate" tabIndex="-1" id="create-modal">
@@ -19,6 +59,12 @@ export const AddProduct = (props) => {
                         <button type="button" className="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div className="modal-body">
+                        {
+                            warning.ok &&
+                            <Alert className='mb-2' variant="filled" severity={warning.type}>
+                                {warning.msg}
+                            </Alert>
+                        }
                         <Formik
                             initialValues={{
                                 name: "",
@@ -36,33 +82,8 @@ export const AddProduct = (props) => {
                                 else if (!values.stock.trim()) { error.stock = "El stock es obligatorio *"; }
                                 return error;
                             }}
-                            onSubmit={async (values, { resetForm }) => {
-                                console.log( values );
-                                // const { ok, msg, ...rest } = await signup(values);
-                                // // Si la consulta tiene errores en la respuesta ( middlewares ) 
-                                // if (rest.errors) {
-                                //     setWarning({
-                                //         ok: true,
-                                //         msg: rest.errors[0].msg,
-                                //         type: "error"
-                                //     })
-                                // }
-                                // // Si la respuesta trae un ok 
-                                // else if (ok) {
-                                //     setWarning({
-                                //         ok: true,
-                                //         msg: msg,
-                                //         type: "success"
-                                //     })
-                                //     resetForm();
-                                // }
-                                // else {
-                                //     setWarning({
-                                //         ok: true,
-                                //         msg: msg,
-                                //         type: "error"
-                                //     })
-                                // }
+                            onSubmit={(values, { resetForm }) => {
+                                createProduct(values, resetForm);
                             }}
                         >
                             {({ errors }) => (
@@ -83,7 +104,7 @@ export const AddProduct = (props) => {
                                         <Field as='select' className="form-select col-4" id='category' name='category'>
                                             <option value="none">Selecciona una categoría</option>
                                             {
-                                                categories.map( category => (
+                                                categories.map(category => (
                                                     <option key={category.id} value={category.id}>{category.name}</option>
                                                 ))
                                             }
@@ -116,7 +137,14 @@ export const AddProduct = (props) => {
                                                 type="submit"
                                                 className="btn btn-primary"
                                             // disabled={!inpNombre || !inpCategoria || !inpDescripcion || !inpStock || !inpPrecio}
-                                            >Crear producto</button>
+                                            >
+                                                {
+                                                    loadingCreate ?
+                                                        <ButtonSpinner />
+                                                        :
+                                                        "Crear producto"
+                                                }
+                                            </button>
                                     }
                                 </Form>
                             )}

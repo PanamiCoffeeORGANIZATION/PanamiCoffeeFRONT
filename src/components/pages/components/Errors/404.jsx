@@ -9,8 +9,8 @@ export const Error404 = () => {
     return (
 
         <section id="noneValidation">
-            <div class="container">
-                <p class="glitch">
+            <div className="container">
+                <p className="glitch">
                     <span aria-hidden="true">error 404</span>
                     error 404
                     <span aria-hidden="true">error 404</span>

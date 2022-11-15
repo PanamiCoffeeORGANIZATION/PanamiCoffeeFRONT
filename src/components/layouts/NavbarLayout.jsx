@@ -3,22 +3,21 @@ import logo from '../../assets/images/logos/logosinfondo.png';
 
 import { HiShoppingCart } from 'react-icons/hi'
 import { useNavigate } from 'react-router';
-import useUser from '../../hooks/useUser';
 import { useEffect, useState } from 'react';
 import { getOneUser } from '../../api/user';
-import { validateToken } from '../../helpers/validateToken';
 import { Link } from 'react-router-dom';
+import useUser from '../../hooks/useUser';
 
 export const NavbarLayout = (props) => {
     const { carrito } = props;
+
+    const userLogged = useUser();
     const navigate = useNavigate();
     const [user, setUser] = useState([]);
-    const logged = useUser();
-
-    console.log( logged );
 
     const cerrarSesion = () => {
         localStorage.clear();
+        userLogged.setIsLogged({auth: false, role: ""})
         navigate('/login');
     }
 
@@ -40,7 +39,7 @@ export const NavbarLayout = (props) => {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     {
-                        logged.isLogged === 1 ?
+                        userLogged.isLogged.auth ?
                             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                                 <li className="nav-item">
                                     <a className="nav-link active" aria-current="page" href="#">Home</a>

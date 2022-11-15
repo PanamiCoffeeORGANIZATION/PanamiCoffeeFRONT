@@ -16,9 +16,10 @@ import { AddProduct } from "../../layouts/Modals/Admin/AddProduct";
 
 // Api
 import { getAllCategories } from "../../../api/category";
-import { getProductsByPage } from "../../../api/product";
+import { deleteProduct, getProductsByPage } from "../../../api/product";
 import { getProductsByName } from "../../../api/search";
 import { EditProduct } from "../../layouts/Modals/Admin/EditProduct";
+import { AlertUI } from "../../UI/Alert";
 
 
 export const AdminProductos = () => {
@@ -26,25 +27,18 @@ export const AdminProductos = () => {
     const [data, setData] = useState(arr);
     const [dataModal, setDataModal] = useState([])
     const [reload, setReload] = useState(false);
-    const [successAlert, setSuccessAlert] = useState(false);
     const [editAlert, setEditAlert] = useState(false);
     const [count, setCount] = useState(0);
     const [inpSearch, setInpSearch] = useState("");
 
     const [categories, setCategories] = useState([]);
     const [products, setProducts] = useState([]);
+    const [productEdit, setProductEdit] = useState({});
 
     const [loading, setLoading] = useState(true);
     const [loadingProducts, setLoadingProducts] = useState(false);
     const [loadingPage, setLoadingPage] = useState(true);
-
-    // Inputs para edición
-    const [inpNombre, setInpNombre] = useState("");
-    const [inpDescripcion, setInpDescripcion] = useState("");
-    const [inpStock, setInpStock] = useState("");
-    const [inpImg, setInpImg] = useState("");
-    const [inpCategoria, setInpCategoria] = useState("");
-    const [inpPrecio, setInpPrecio] = useState("");
+    const [warning, setWarning] = useState({ok: false, msg: "", type: ""});
 
     const handleSearch = async () => {
         if ( inpSearch.length === 0 ) return;
@@ -70,45 +64,6 @@ export const AdminProductos = () => {
         setDataModal([name, description, img])
     }
 
-    const openCreate = () => {
-        setSuccessAlert(false);
-        cleanInputs();
-    }
-
-    const cleanInputs = () => {
-        setDataModal("");
-        setInpNombre("");
-        setInpCategoria("");
-        setInpImg("");
-        setInpStock("");
-        setInpDescripcion("");
-        setInpPrecio("");
-    }
-
-    const editProduct = e => {
-        e.preventDefault();
-
-        const newProduct = {
-            id: dataModal[0],
-            nombre: inpNombre,
-            precio: inpPrecio,
-            descripcion: inpDescripcion,
-            stock: inpStock,
-            categoria: inpCategoria
-        }
-
-        arr.map((item, index) => {
-            if (item.id === dataModal[0]) {
-                newProduct.img = item.img,
-                    arr[index] = newProduct;
-                setReload(!reload);
-            }
-        });
-
-        setEditAlert(true);
-        setTimeout(() => { setEditAlert(false) }, 3000);
-    }
-
     const getApi = async () => {
 
         setCategories(await getAllCategories());
@@ -130,17 +85,27 @@ export const AdminProductos = () => {
         setLoadingProducts(false);
     }
 
+    const handleEdit = ( item ) => {
+
+        handleDescription( item );
+        setProductEdit( item );
+
+    }
+
+    const handleDelete = async id => {
+        const { ok, msg } = await deleteProduct( id );
+        ok ? 
+        setWarning({ok: true, msg , type: "success"}) 
+        :
+        setWarning({ok: true, msg: "Hubo un error al eliminar el producto", type: "error"});
+        setTimeout( () => setWarning({ok: false, msg: "", type: ""}), 3000)
+        setReload( !reload );
+    }
+
     useEffect(() => {
         getApi();
         setData(arr);
     }, [reload])
-
-    const handleNombre = e => setInpNombre(e.target.value);
-    const handleCategoria = e => setInpCategoria(e.target.value);
-    const handleImg = e => setInpImg(e.target.value);
-    const handleDescripcion = e => setInpDescripcion(e.target.value);
-    const handlePrecio = e => setInpPrecio(e.target.value);
-    const handleStock = e => setInpStock(e.target.value);
 
 
     return (
@@ -153,9 +118,11 @@ export const AdminProductos = () => {
                         <NavbarLayoutAdmin />
                         <div id="admin-productos" className="bg-dark scroll pb-5" style={{ height: "calc(100vh - 68px)", overflowY: "scroll" }}>
                             <div className="container">
+                                {
+                                    warning.ok && <AlertUI text={warning.msg} type={warning.type} />
+                                }
                                 <div className="row">
                                     <button
-                                        onClick={openCreate}
                                         style={{ width: "200px" }}
                                         data-bs-toggle="modal"
                                         data-bs-target="#create-modal"
@@ -196,9 +163,9 @@ export const AdminProductos = () => {
                                                             <th scope="col">Nombre</th>
                                                             <th scope="col">Categoria</th>
                                                             <th scope="col">Precio</th>
+                                                            <th scope="col">Stock</th>
                                                             <th scope="col">Imagen</th>
                                                             <th scope="col">Descripción</th>
-                                                            <th scope="col">Stock</th>
                                                             <th scope="col">Acciones</th>
                                                         </tr>
                                                     </thead>
@@ -209,6 +176,7 @@ export const AdminProductos = () => {
                                                                     <td>{item.name}</td>
                                                                     <td>{item.category.name}</td>
                                                                     <td>${Number(item.price).toLocaleString('en-US')}</td>
+                                                                    <td style={item.stock <= 0 ? {color: "#dc3545"} : {color: "#77ff77"}}>{item.stock}</td>
                                                                     <td>
                                                                         <label htmlFor="imgFile">
                                                                             <button
@@ -232,16 +200,16 @@ export const AdminProductos = () => {
                                                                             <MdDescription />
                                                                         </button>
                                                                     </td>
-                                                                    <td>{item.stock}</td>
                                                                     <td>
                                                                         <button
                                                                             className="btn btn-primary m-1"
                                                                             data-bs-toggle="modal"
                                                                             data-bs-target="#edit-modal"
+                                                                            onClick={() => handleEdit(item)}
                                                                         >
                                                                             <RiPencilFill />
                                                                         </button>
-                                                                        <button className="btn btn-danger m-1">
+                                                                        <button className="btn btn-danger m-1" onClick={ () => handleDelete(item.id)}>
                                                                             <RiDeleteBin4Fill />
                                                                         </button>
                                                                     </td>
@@ -301,9 +269,9 @@ export const AdminProductos = () => {
                 </div>
             </div>
             {/* Modal Agregar */}
-            <AddProduct categories={categories} />
+            <AddProduct categories={categories} reload={reload} setReload={setReload}/>
             {/* Modal Edición */}
-            <EditProduct dataModal={dataModal} editAlert={editAlert} />
+            <EditProduct dataModal={dataModal} reload={reload} setReload={setReload} editAlert={editAlert} product={productEdit} categories={categories}/>
         </>
     )
 }

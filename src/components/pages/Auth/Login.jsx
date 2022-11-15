@@ -4,15 +4,47 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "../../../api/user";
 import logo from "../../../assets/images/logos/logo.png";
+import useUser from "../../../hooks/useUser";
 
 export const Login = (props) => {
 
     const navigate = useNavigate();
+    const userLogged = useUser();
     const [loading, setLoading] = useState(false);
     const [warning, setWarning] = useState({
         ok: false,
         msg: ""
     });
+
+    const validateInfo = async values => {
+
+        setLoading(true);
+        const { ok, msg, ...rest } = await login(values);
+        setLoading(false);
+
+        if (rest.errors) {
+            setWarning({
+                ok: true,
+                msg: rest.errors[0].msg
+            })
+        }
+        else if (ok) {
+            setWarning({
+                ok: false,
+                msg: ""
+            })
+            userLogged.setIsLogged({ auth: true, role: rest.user.role });
+            localStorage.setItem("token", rest.token);
+            localStorage.setItem("uid", rest.user.uid);
+            navigate('/user/productos');
+        }
+        else {
+            setWarning({
+                ok: true,
+                msg: msg
+            })
+        }
+    }
 
     return (
         <section id="login" className="scroll">
@@ -46,33 +78,8 @@ export const Login = (props) => {
 
                             return error;
                         }}
-                        onSubmit={async (values, { resetForm }) => {
-
-                            setLoading( true );
-                            const { ok, msg, ...rest } = await login(values);
-                            setLoading( false );
-
-                            if (rest.errors) {
-                                setWarning({
-                                    ok: true,
-                                    msg: rest.errors[0].msg
-                                })
-                            }
-                            else if (ok) {
-                                setWarning({
-                                    ok: false,
-                                    msg: ""
-                                })
-                                localStorage.setItem("token", rest.token);
-                                localStorage.setItem("uid", rest.user.uid )
-                                navigate('/user/productos');
-                            }
-                            else {
-                                setWarning({
-                                    ok: true,
-                                    msg: msg
-                                })
-                            }
+                        onSubmit={(values, { resetForm }) => {
+                            validateInfo(values);
                         }}
                     >
                         {({ errors }) => (

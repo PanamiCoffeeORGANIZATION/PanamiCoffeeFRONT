@@ -1,24 +1,26 @@
 import { useEffect, useState } from "react";
+import useUser from "../../../hooks/useUser";
 
 
 export const ProductoItem = (props) => {
     const { addProduct, removeProduct, data, index, carrito = [] } = props;
 
+    const userLogged = useUser();
     const [deleteSelect, setDeleteSelect] = useState(false);
 
     useEffect(() => {
         setDeleteSelect(false)
         carrito.map(item => {
-            item.id === data.id 
-            ? setDeleteSelect(true)
-            : null
+            item.id === data.id
+                ? setDeleteSelect(true)
+                : null
         })
     }, [carrito])
 
-    const handleDelete = ( item ) => {
-        console.log( item );
-        setDeleteSelect( false )
-        removeProduct( item )
+    const handleDelete = (item) => {
+        console.log(item);
+        setDeleteSelect(false)
+        removeProduct(item)
     }
 
     return (
@@ -28,17 +30,22 @@ export const ProductoItem = (props) => {
                 <div className="card-body text-white text-white">
                     <h5 className="card-title">{data.name}</h5>
                     {
-                        data.description ? 
-                        <p style={{fontSize:"14px"}} className="card-text"><i>{data.description}</i></p>
-                        :
-                        <p style={{fontSize:"14px"}} className="card-text"><i>(No hay descripción para este producto)</i></p>
+                        data.description ?
+                            <p style={{ fontSize: "14px" }} className="card-text"><i>{data.description}</i></p>
+                            :
+                            <p style={{ fontSize: "14px" }} className="card-text"><i>(No hay descripción para este producto)</i></p>
                     }
                     {
                         !deleteSelect
                             ?
-                            <a href="#" id={data.id} className="btn btn-purple my-2 add-product" onClick={() => addProduct(data)}>
-                                Agregar al carrito
-                            </a>
+                            userLogged.isLogged.auth ?
+                                <a href="#" id={data.id} className="btn btn-purple my-2 add-product" onClick={() => addProduct(data)}>
+                                    Agregar al carrito
+                                </a>
+                                :
+                                <a href="/login" id={data.id} className="btn btn-purple my-2 add-product">
+                                    Agregar al carrito
+                                </a>
                             :
                             <a href="#" id={data.id} className="btn btn-warning my-2 add-remove" onClick={() => handleDelete(data)}>
                                 Eliminar del carrito
