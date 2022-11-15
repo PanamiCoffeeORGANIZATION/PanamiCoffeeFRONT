@@ -47,6 +47,21 @@ export const getOneUser = async ( uid ) => {
 
 }
 
+export const getAllUsers = async () => {
+
+    const user = await axios.get(`${URL}/api/users`);
+    return user.data.users;
+
+}
+
+export const getAllPurchases = async () => {
+
+    const purchases = await axios.get(`${URL}/api/users/purchases`);
+
+    return purchases.data.purchases;
+
+}
+
 // PURCHASE
 export const purchase = async (data) => {
 

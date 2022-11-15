@@ -20,8 +20,6 @@ export const EditProduct = (props) => {
     const [inpStock, setInpStock] = useState("");
     const [inpImg, setInpImg] = useState("");
 
-    console.log( product );
-
     const editProduct = async () => {
 
         const values = {
