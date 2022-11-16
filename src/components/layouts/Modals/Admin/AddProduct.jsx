@@ -4,6 +4,8 @@ import React from 'react'
 import { useState } from 'react';
 import { BsFillBagPlusFill } from 'react-icons/bs'
 import { addProduct } from '../../../../api/admin';
+import { cloudinaryImages } from '../../../../api/cloudinary';
+import { uploadImage } from '../../../../helpers/cloudinaryImage';
 import { ButtonSpinner } from '../../../UI/ButtonSpinner';
 
 export const AddProduct = (props) => {
@@ -14,10 +16,22 @@ export const AddProduct = (props) => {
     const [warning, setWarning] = useState({ ok: false, msg: "", type: "" })
     const [loadingCreate, setLoadingCreate] = useState(false);
 
+    const [inpImg, setInpImg] = useState("");
+
     const createProduct = async (values, resetForm) => {
 
+        const newValues = values;
         setLoadingCreate(true);
-        const { ok, msg, ...rest } = await addProduct(values);
+
+        if ( !!inpImg ) {
+            const { data, status } = await uploadImage( inpImg );
+            if ( status === 200 ) {
+                
+                newValues.img = data.secure_url;
+            }
+        };
+
+        const { ok, msg, ...rest } = await addProduct( newValues );
 
         // Si la consulta tiene errores en la respuesta ( middlewares ) 
         if (rest.errors) {
@@ -72,7 +86,6 @@ export const AddProduct = (props) => {
                                 description: "",
                                 price: "",
                                 stock: "",
-                                img: "",
                             }}
                             validate={(values) => {
                                 let error = {};
@@ -95,7 +108,7 @@ export const AddProduct = (props) => {
                                         </div>
                                         <div className="col-5">
                                             <label htmlFor="img">Imagen</label>
-                                            <Field type="file" className="form-control" id="img" name='img' />
+                                            <input onChange={ e => setInpImg( e.target.files[0] )} type="file" className="form-control" id="img" name='img' />
                                         </div>
                                     </div>
                                     <ErrorMessage name='name' component={() => (<div id="emailHelp" className="form-text error">{errors.name}</div>)} />

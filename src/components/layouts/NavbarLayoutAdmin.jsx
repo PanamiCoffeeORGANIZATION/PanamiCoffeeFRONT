@@ -16,6 +16,9 @@ export const NavbarLayoutAdmin = (props) => {
                 <div className="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
                         <li className="nav-item">
+                            <Link to="/user/productos" className="nav-link">Usuario View</Link>
+                        </li>
+                        <li className="nav-item">
                             <Link to="/admin/productos" className="nav-link">Productos</Link>
                         </li>
                         <li className="nav-item">

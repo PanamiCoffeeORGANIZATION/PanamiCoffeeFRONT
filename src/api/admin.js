@@ -17,7 +17,7 @@ export const addProduct = async product => {
         ...product
     },{
         headers: {
-            'x-token': token
+            'x-token': token,
         }
     })
     .then( resp => resp.data )

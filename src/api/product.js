@@ -17,12 +17,18 @@ export const getProductsByPage = async ( from = 0 ) => {
 
 export const putProduct = async product => {
 
+    const myProductItem = product;
+
     const { ok, token, user } = await validateToken();
     if ( !ok ) return location.href = "/error/nonevalidation";
 
+    if (!myProductItem.img) {
+        delete myProductItem.img
+    }
+
     try {
-        const myProduct = axios.put(`${URL}/api/products/${product.id}`,
-        product,
+        const myProduct = axios.put(`${URL}/api/products/${myProductItem.id}`,
+        myProductItem,
         {
             headers:{
                 'x-token': token

@@ -3,6 +3,7 @@ import { useEffect } from 'react';
 import { useState } from 'react';
 import { HiIdentification } from 'react-icons/hi'
 import { putProduct } from '../../../../api/product';
+import { uploadImage } from '../../../../helpers/cloudinaryImage';
 import { ButtonSpinner } from '../../../UI/ButtonSpinner';
 
 export const EditProduct = (props) => {
@@ -21,6 +22,7 @@ export const EditProduct = (props) => {
     const [inpImg, setInpImg] = useState("");
 
     const editProduct = async () => {
+        setLoadingCreate(true);
 
         const values = {
             name: inpName,
@@ -28,11 +30,18 @@ export const EditProduct = (props) => {
             price: inpPrice,
             description: inpDescription,
             stock: inpStock,
-            img: inpImg,
             id: product.id
         }
 
-        setLoadingCreate(true);
+        // TODO - ELIMINAR LA IMAGENJ ANTERIOR DE CLOUDINARY
+        if ( !!inpImg ) {
+            const { data, status } = await uploadImage( inpImg );
+            if ( status === 200 ) {
+                
+                values.img = data.secure_url;
+            }
+        };
+
         const { ok, msg, ...rest } = await putProduct(values);
 
         // Si la consulta tiene errores en la respuesta ( middlewares ) 
@@ -70,7 +79,6 @@ export const EditProduct = (props) => {
             setInpName(product.name);
             setInpCategory(product.category._id);
             setInpPrice(product.price);
-            setInpImg( product.img )
             product.description ? setInpDescription(product.description) : setInpDescription("");
             setInpStock(product.stock);
         }
@@ -99,7 +107,7 @@ export const EditProduct = (props) => {
                                 </div>
                                 <div className="col-5">
                                     <label htmlFor="img">Imagen</label>
-                                    <input type="file" className="form-control" id="img" name='img' />
+                                    <input onChange={ e => setInpImg(e.target.files[0])} type="file" className="form-control" id="img" name='img' />
                                 </div>
                             </div>
 

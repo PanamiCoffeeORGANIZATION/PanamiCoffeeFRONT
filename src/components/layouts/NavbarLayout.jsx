@@ -17,7 +17,7 @@ export const NavbarLayout = (props) => {
 
     const cerrarSesion = () => {
         localStorage.clear();
-        userLogged.setIsLogged({auth: false, role: ""})
+        userLogged.setIsLogged({ auth: false, role: "" })
         navigate('/login');
     }
 
@@ -41,11 +41,14 @@ export const NavbarLayout = (props) => {
                     {
                         userLogged.isLogged.auth ?
                             <ul className="navbar-nav ms-auto mb-2 mb-lg-0">
+                                {
+                                    userLogged.isLogged.role === 'ADMIN_ROLE' &&
+                                    <li className="nav-item">
+                                        <Link className="nav-link" to="/admin/productos">Gestión</Link>
+                                    </li>
+                                }
                                 <li className="nav-item">
-                                    <a className="nav-link active" aria-current="page" href="#">Home</a>
-                                </li>
-                                <li className="nav-item">
-                                    <a className="nav-link" href="#">Link</a>
+                                    <Link className="nav-link active" aria-current="page" to="/">Home</Link>
                                 </li>
                                 <li className="nav-item dropdown">
                                     <a className="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">

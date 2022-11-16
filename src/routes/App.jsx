@@ -48,6 +48,7 @@ function App() {
       <UserContext.Provider value={{ isLogged, setIsLogged }}>
         <BrowserRouter>
           <Routes>
+            <Route path='/' element={<Home />} />
             {
               !isLogged.auth ?
                 <>
