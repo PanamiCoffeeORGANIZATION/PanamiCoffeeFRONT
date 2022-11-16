@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import useUser from "../../../hooks/useUser";
 
 
@@ -43,9 +44,9 @@ export const ProductoItem = (props) => {
                                     Agregar al carrito
                                 </a>
                                 :
-                                <a href="/login" id={data.id} className="btn btn-purple my-2 add-product">
+                                <Link to="/login" id={data.id} className="btn btn-purple my-2 add-product">
                                     Agregar al carrito
-                                </a>
+                                </Link>
                             :
                             <a href="#" id={data.id} className="btn btn-warning my-2 add-remove" onClick={() => handleDelete(data)}>
                                 Eliminar del carrito
@@ -53,6 +54,13 @@ export const ProductoItem = (props) => {
                     }
                 </div>
                 <p className="price">$ {Number(data.price).toLocaleString('en-US')}</p>
+                {
+                    data.stock === 1 ? <p className="last-unity"><b>ÚLTIMA <br />UNIDAD</b></p>
+                        :
+                        data.stock <= 5 ?
+                            <p className="last-unity">ÚLTIMAS <br /><b>{data.stock}</b> unidades</p>
+                            : null
+                }
             </div>
         </div>
     )

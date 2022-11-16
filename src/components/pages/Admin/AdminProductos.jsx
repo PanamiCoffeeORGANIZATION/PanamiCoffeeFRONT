@@ -136,7 +136,7 @@ export const AdminProductos = () => {
                                     <div className="col-lg-4 col-sm-8">
                                         <div className="input-group mb-3">
                                             <input value={inpSearch} onChange={ e => setInpSearch( e.target.value ) } type="text" className="form-control text-bg-dark" placeholder="Buscador de productos" aria-label="Buscador de productos" aria-describedby="button-addon2" />
-                                            <button className="btn btn-secondary" type="button" id="button-addon2" onClick={handleSearch}>Button</button>
+                                            <button className="btn btn-secondary" type="button" id="button-addon2" onClick={handleSearch}>Buscar</button>
                                         </div>
                                     </div>
                                     {

@@ -12,7 +12,7 @@ export const SelectCategoriy = (props) => {
             </div>
             <hr />
             <div className="offcanvas-body">
-                <button className={`btn-categories ${ categorySelected === "TODO" && "active" }`} onClick={() => handleCategory("TODO")}>
+                <button data-bs-dismiss="offcanvas" className={`btn-categories ${ categorySelected === "TODO" && "active" }`} onClick={() => handleCategory("TODO")}>
                     {
                         categorySelected === "TODO" && categoryLoader ?
                             <span className="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
@@ -23,6 +23,7 @@ export const SelectCategoriy = (props) => {
                 {
                     categories.map(category => (
                         <button
+                            data-bs-dismiss="offcanvas"
                             onClick={() => handleCategory(category.id)}
                             className={`btn-categories ${ categorySelected === category.id && "active" }`}
                             key={category.id}
