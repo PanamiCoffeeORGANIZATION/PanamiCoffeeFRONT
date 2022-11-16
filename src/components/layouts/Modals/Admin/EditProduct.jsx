@@ -33,8 +33,9 @@ export const EditProduct = (props) => {
             id: product.id
         }
 
-        // TODO - ELIMINAR LA IMAGENJ ANTERIOR DE CLOUDINARY
-        if ( !!inpImg ) {
+        // TODO - ELIMINAR LA IMAGEN ANTERIOR DE CLOUDINARY
+        if ( inpImg ) {
+            console.log("entra");
             const { data, status } = await uploadImage( inpImg );
             if ( status === 200 ) {
                 
